@@ -8,3 +8,5 @@ async def get_position_timeseries(coordinate, temperature, variable):
                                                              (temperature[variable].time.dt.day == dt_object.day),
                                                         method='nearest')
     return temperature_at_position
+
+

@@ -4,11 +4,10 @@ import xarray as xr
 from fastapi import Response
 from pydantic import BaseModel
 from datetime import datetime
-
-from src.temperature import get_position_timeseries
+from src.temperature_timeseries import get_historical_timeseries
 from src.temperature_plot import plot_timeseries, plot_histogram
-from src.return_periods import calculate_return_period
-from src.api_request import get_forecast_data
+from src.calculations import calculate_mean_temp_and_rp
+from src.api_request import get_forecast_and_historical_data
 
 app = FastAPI()
 
@@ -34,33 +33,32 @@ def read_data():
 
 @app.get("/temperature/daily")
 async def get_daily_average_temperature(coordinate: Coordinate = Depends()):
+
+    # get forecast and historical temperature data
+    forecast_temperature, historical_temperature = await get_forecast_and_historical_data(coordinate=coordinate)
+
+    # get daily, weekly and monthly data
+    daily_historical_temperature, weekly_historical_temperature, monthly_historical_temperature = \
+        get_historical_timeseries(coordinate, historical_temperature)
+
     # get date
     date = datetime.fromtimestamp(coordinate.timestamp)
     date_string = date.strftime('%Y-%m-%d')
 
-    # get forecast temperature data
-    forecast_temperature = await get_forecast_data(coordinate)
+    # -----------------------------------------------------------------------------------------------------------------
+    # DAILY
+    # -----------------------------------------------------------------------------------------------------------------
+    daily_mean_temperature, daily_return_period = await calculate_mean_temp_and_rp(
+        daily_historical_temperature,
+        float(forecast_temperature.loc[date_string].values),
+        coordinate
+    )
 
-    # get temperature data at position
-    temperature_at_position = await get_position_timeseries(coordinate, temperature_cache, 'max')
-
-    # calculate average temperature over the whole timeseries
-    mean_temperature = float(temperature_at_position.mean('time').values)
-
-    # calculate return period of actual temperature
-    if forecast_temperature.loc[date_string].values[0] > mean_temperature:
-        return_period = await calculate_return_period(temperature_at_position,
-                                                      forecast_temperature.loc[date_string], mode='max')
-    elif forecast_temperature.loc[date_string].values[0] < mean_temperature:
-        return_period = await calculate_return_period(temperature_at_position,
-                                                      forecast_temperature.loc[date_string], mode='min')
-    else:
-        return_period = 2  # if temperatures are the same cdf=0.5 which gives rp=2
 
     return {
-        'average_temperature': mean_temperature,
-        'todays_temperature': forecast_temperature.loc[date_string].values[0],
-        'return_period': return_period
+        'daily_average_temperature': daily_mean_temperature,
+        'daily_current_temperature': forecast_temperature.loc[date_string].values[0],
+        'daily_return_period': daily_return_period
     }
 
 
@@ -76,13 +74,11 @@ async def get_daily_temperature_timeseries(coordinate: Coordinate = Depends()):
 async def get_daily_temperature_histogram(coordinate: Coordinate = Depends()):
     # Get historical timeseries
     temperature_at_position = await get_position_timeseries(coordinate, temperature_cache, 'max')
-
     # Get current temperature
     forecast_temperature = await get_forecast_data(coordinate)
     date = datetime.fromtimestamp(coordinate.timestamp)
     date_string = date.strftime('%Y-%m-%d')
     current_temperature = forecast_temperature.loc[date_string].values[0]
-
     # Plot
     im_bytes = await plot_histogram(temperature_at_position, current_temperature)
     headers = {'Content-Disposition': 'inline; filename="histogram.png"'}
