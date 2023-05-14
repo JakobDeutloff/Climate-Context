@@ -3,10 +3,12 @@ from fastapi import FastAPI, Depends
 import xarray as xr
 from fastapi import Response
 from pydantic import BaseModel
+from datetime import datetime
 
 from src.temperature import get_position_timeseries
 from src.temperature_plot import plot_timeseries
 from src.return_periods import calculate_return_period
+from src.api_request import get_forecast_data
 
 app = FastAPI()
 
@@ -15,7 +17,6 @@ class Coordinate(BaseModel):
     timestamp: int
     latitude: float
     longitude: float
-    temperature: float = 20
 
 
 def read_data():
@@ -33,6 +34,13 @@ def read_data():
 
 @app.get("/average_temperature/daily")
 async def get_daily_average_temperature(coordinate: Coordinate = Depends()):
+    # get date
+    date = datetime.fromtimestamp(coordinate.timestamp)
+    date_string = date.strftime('%Y-%m-%d')
+
+    # get forecast temperature data
+    forecast_temperature = await get_forecast_data(coordinate)
+
     # get temperature data at position
     temperature_at_position = await get_position_timeseries(coordinate, temperature_cache, 'max')
 
@@ -40,14 +48,20 @@ async def get_daily_average_temperature(coordinate: Coordinate = Depends()):
     mean_temperature = float(temperature_at_position.mean('time').values)
 
     # calculate return period of actual temperature
-    if coordinate.temperature > mean_temperature:
-        return_period = calculate_return_period(temperature_at_position, coordinate.temperature, mode='max')
-    elif coordinate.temperature < mean_temperature:
-        return_period = calculate_return_period(temperature_at_position, coordinate.temperature, mode='min')
+    if forecast_temperature.loc[date_string].values[0] > mean_temperature:
+        return_period = await calculate_return_period(temperature_at_position,
+                                                      forecast_temperature.loc[date_string], mode='max')
+    elif forecast_temperature.loc[date_string].values[0] < mean_temperature:
+        return_period = await calculate_return_period(temperature_at_position,
+                                                      forecast_temperature.loc[date_string], mode='min')
     else:
         return_period = 2  # if temperatures are the same cdf=0.5 which gives rp=2
 
-    return {'average_temperature': mean_temperature, 'return_period': return_period}
+    return {
+        'average_temperature': mean_temperature,
+        'todays_temperature': forecast_temperature.loc[date_string].values[0],
+        'return_period': return_period
+    }
 
 
 @app.get("/image/daily")

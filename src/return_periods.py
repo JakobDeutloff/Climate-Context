@@ -2,7 +2,7 @@ from xclim.indices.stats import fit, parametric_cdf
 
 
 # %% calculate single RP
-def calculate_return_period(temperature_timeseries, actual_temperature, mode='max'):
+async def calculate_return_period(temperature_timeseries, actual_temperature, mode='max'):
     """
     Computes the value of the return period for the actual temperature
     :param temperature_timeseries: days in years timeseries at location in °C
