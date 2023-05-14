@@ -11,7 +11,7 @@ def get_historical_timeseries(coordinate, data_historical):
     weekly_data = np.array([])
     monthly_data = np.array([])
 
-    for year in range(1950, date.year + 1):
+    for year in range(1950, date.year):
         enddate = datetime(year=year, month=date.month, day=date.day)
         week = pd.date_range(enddate - timedelta(days=6), enddate, freq='d')
         weekly_data = np.append(weekly_data, data_historical.loc[week].mean())
@@ -20,7 +20,7 @@ def get_historical_timeseries(coordinate, data_historical):
 
     daily_data = data_historical[(data_historical.index.month == date.month) & (data_historical.index.day == date.day)]
     daily_data.index = daily_data.index.year
-    weekly_data = pd.DataFrame(data=weekly_data, index=np.arange(1950, date.year + 1))
-    monthly_data = pd.DataFrame(data=monthly_data, index=np.arange(1950, date.year + 1))
+    weekly_data = pd.DataFrame(data=weekly_data, index=np.arange(1950, date.year))
+    monthly_data = pd.DataFrame(data=monthly_data, index=np.arange(1950, date.year))
 
     return daily_data, weekly_data, monthly_data

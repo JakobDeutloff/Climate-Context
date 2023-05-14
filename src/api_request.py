@@ -9,6 +9,8 @@ async def get_forecast_and_historical_data(coordinate):
     # Get start and enddate
     today = datetime.fromtimestamp(coordinate.timestamp)
     startdate = today - timedelta(days=30)
+    enddate_historical = today - timedelta(days=360)
+    enddate_historical_string = enddate_historical.strftime('%Y-%m-%d')
     today_string = today.strftime('%Y-%m-%d')
     startdate_string = startdate.strftime('%Y-%m-%d')
 
@@ -28,9 +30,13 @@ async def get_forecast_and_historical_data(coordinate):
         'daily': 'temperature_2m_max',
         'timezone': 'auto',
         'start_date': '1950-01-01',
-        'end_date': today_string
+        'end_date': enddate_historical_string
     }
 
+    return api_request(parameters_forecast, parameters_historical)
+
+
+def api_request(parameters_forecast, parameters_historical):
     request_forecast = requests.get('https://api.open-meteo.com/v1/forecast', parameters_forecast)
     forecast_data = pd.DataFrame(data=request_forecast.json()['daily']['temperature_2m_max'],
                                  index=pd.DatetimeIndex(request_forecast.json()['daily']['time']),
@@ -40,5 +46,4 @@ async def get_forecast_and_historical_data(coordinate):
     historical_data = pd.DataFrame(data=request_historical.json()['daily']['temperature_2m_max'],
                                    index=pd.DatetimeIndex(request_historical.json()['daily']['time']),
                                    columns=['temperature_2m_max'])
-
     return forecast_data, historical_data
