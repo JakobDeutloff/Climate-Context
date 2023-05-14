@@ -20,3 +20,22 @@ async def plot_timeseries(temperature_at_position, mean_temperature):
         im.save(buf, format='PNG')
         im_bytes = buf.getvalue()
     return im_bytes
+
+async def plot_histogram(temperature_at_position, current_temperature):
+    with plt.rc_context({'axes.edgecolor': 'white', 'xtick.color': 'white', 'ytick.color': 'white'}):
+        fig, ax = plt.subplots()
+        ax.hist(temperature_at_position, color='white', rwidth=0.8)
+        ax.axvline(current_temperature, color='white', linestyle='--')
+        ax.set_xlabel('Temperature [°C]')
+        ax.set_ylabel('Frequency')
+        ax.xaxis.label.set_color('white')
+        ax.yaxis.label.set_color('white')
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', transparent=True)
+    im = Image.open(buf)
+    with io.BytesIO() as buf:
+        im.save(buf, format='PNG')
+        im_bytes = buf.getvalue()
+    return im_bytes
+
+
