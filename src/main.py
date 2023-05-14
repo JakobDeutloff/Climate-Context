@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 import xarray as xr
 from fastapi import Response
 from pydantic import BaseModel
@@ -29,15 +29,15 @@ def read_data():
     return {'max': temperature_max, 'mean': temperature_mean, 'min': temperature_min}
 
 
-@app.post("/average_temperature/daily")
-async def post_daily_average_temperature(coordinate: Coordinate):
+@app.get("/average_temperature/daily")
+async def get_daily_average_temperature(coordinate: Coordinate = Depends()):
     temperature_at_position = await get_position_timeseries(coordinate, temperature_cache, 'max')
     mean_temperature = float(temperature_at_position.mean('time').values)
     return {'average_temperature': mean_temperature}
 
 
-@app.post("/image/daily")
-async def post_daily_image(coordinate: Coordinate):
+@app.get("/image/daily")
+async def get_daily_image(coordinate: Coordinate = Depends()):
     temperature_at_position = await get_position_timeseries(coordinate, temperature_cache, 'max')
     mean_temperature = float(temperature_at_position.mean('time').values)
     im_bytes = await plot_timeseries(temperature_at_position, mean_temperature)
