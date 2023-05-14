@@ -7,3 +7,5 @@ pillow==9.5.0
 uvicorn==0.20.0
 netcdf4==1.6.3
 netcdf==66.0.2
+xclim~=0.43.0
+cartopy~=0.21.1
