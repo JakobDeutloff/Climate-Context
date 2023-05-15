@@ -31,9 +31,7 @@ async def get_daily_average_temperature(coordinate: Coordinate = Depends()):
     daily_historical_temperature, weekly_historical_temperature, monthly_historical_temperature = \
         await get_historical_timeseries(coordinate, historical_temperature)
 
-    # -----------------------------------------------------------------------------------------------------------------
-    # DAILY
-    # -----------------------------------------------------------------------------------------------------------------
+    # Daily
     daily_mean_temperature, daily_return_period, daily_current_temperature = \
         await calculate_mean_value_current_value_and_rp(
             daily_historical_temperature,
@@ -42,9 +40,7 @@ async def get_daily_average_temperature(coordinate: Coordinate = Depends()):
             timeframe='daily'
         )
 
-    # -----------------------------------------------------------------------------------------------------------------
     # Weekly
-    # -----------------------------------------------------------------------------------------------------------------
     weekly_mean_temperature, weekly_return_period, weekly_current_temperature = \
         await calculate_mean_value_current_value_and_rp(
             weekly_historical_temperature,
@@ -53,9 +49,7 @@ async def get_daily_average_temperature(coordinate: Coordinate = Depends()):
             timeframe='weekly'
         )
 
-    # -----------------------------------------------------------------------------------------------------------------
-    # monthly
-    # -----------------------------------------------------------------------------------------------------------------
+    # Monthly
     monthly_mean_temperature, monthly_return_period, monthly_current_temperature = \
         await calculate_mean_value_current_value_and_rp(
             monthly_historical_temperature,
@@ -68,12 +62,18 @@ async def get_daily_average_temperature(coordinate: Coordinate = Depends()):
         'daily_average_temperature': daily_mean_temperature,
         'daily_current_temperature': daily_current_temperature,
         'daily_return_period_temperature': daily_return_period,
+        'daily_historical_temperature': list(daily_historical_temperature.values.squeeze()),
+        'daily_historical_index': list(daily_historical_temperature.index),
         'weekly_average_temperature': weekly_mean_temperature,
         'weekly_current_temperature': weekly_current_temperature,
         'weekly_return_period_temperature': weekly_return_period,
+        'weekly_historical_temperature': list(weekly_historical_temperature.values.squeeze()),
+        'weekly_historical_index': list(weekly_historical_temperature.index),
         'monthly_average_temperature': monthly_mean_temperature,
         'monthly_current_temperature': monthly_current_temperature,
-        'monthly_return_period_temperature': monthly_return_period
+        'monthly_return_period_temperature': monthly_return_period,
+        'monthly_historical_temperature': list(monthly_historical_temperature.values.squeeze()),
+        'monthly_historical_index': list(monthly_historical_temperature.index)
     }
 
 
@@ -90,9 +90,7 @@ async def get_precipitation(coordinate: Coordinate = Depends()):
     daily_historical_precipitation, weekly_historical_precipitation, monthly_historical_precipitation = \
         await get_historical_timeseries(coordinate, historical_precipitation)
 
-    # -----------------------------------------------------------------------------------------------------------------
-    # DAILY
-    # -----------------------------------------------------------------------------------------------------------------
+    # daily
     daily_mean_precipitation, daily_return_period, daily_current_precipitation = \
         await calculate_mean_value_current_value_and_rp(
             daily_historical_precipitation,
@@ -101,9 +99,7 @@ async def get_precipitation(coordinate: Coordinate = Depends()):
             timeframe='daily'
         )
 
-    # -----------------------------------------------------------------------------------------------------------------
-    # Weekly
-    # -----------------------------------------------------------------------------------------------------------------
+    # weekly
     weekly_mean_precipitation, weekly_return_period, weekly_current_precipitation = \
         await calculate_mean_value_current_value_and_rp(
             weekly_historical_precipitation,
@@ -112,9 +108,7 @@ async def get_precipitation(coordinate: Coordinate = Depends()):
             timeframe='weekly'
         )
 
-    # -----------------------------------------------------------------------------------------------------------------
     # monthly
-    # -----------------------------------------------------------------------------------------------------------------
     monthly_mean_precipitation, monthly_return_period, monthly_current_precipitation = \
         await calculate_mean_value_current_value_and_rp(
             monthly_historical_precipitation,
@@ -127,12 +121,18 @@ async def get_precipitation(coordinate: Coordinate = Depends()):
         'daily_average_precipitation': daily_mean_precipitation,
         'daily_current_precipitation': daily_current_precipitation,
         'daily_return_period_precipitation': daily_return_period,
+        'daily_historical_precipitation': list(daily_historical_precipitation.values.squeeze()),
+        'daily_historical_index': list(daily_historical_precipitation.index),
         'weekly_average_precipitation': weekly_mean_precipitation,
         'weekly_current_precipitation': weekly_current_precipitation,
         'weekly_return_period_precipitation': weekly_return_period,
+        'weekly_historical_precipitation': list(weekly_historical_precipitation.values.squeeze()),
+        'weekly_historical_index': list(weekly_historical_precipitation.index),
         'monthly_average_precipitation': monthly_mean_precipitation,
         'monthly_current_precipitation': monthly_current_precipitation,
-        'monthly_return_period_precipitation': monthly_return_period
+        'monthly_return_period_precipitation': monthly_return_period,
+        'monthly_historical_precipitation': list(monthly_historical_precipitation.values.squeeze()),
+        'monthly_historical_index': list(monthly_historical_precipitation.index),
     }
 
 
