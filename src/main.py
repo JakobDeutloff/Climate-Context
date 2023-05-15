@@ -136,30 +136,5 @@ async def get_precipitation(coordinate: Coordinate = Depends()):
     }
 
 
-
-@app.get("/image/temperature/daily/timeseries")
-async def get_daily_temperature_timeseries(coordinate: Coordinate = Depends()):
-    temperature_at_position = await get_position_timeseries(coordinate, temperature_cache, 'max')
-    mean_temperature = float(temperature_at_position.mean('time').values)
-    im_bytes = await plot_timeseries(temperature_at_position, mean_temperature)
-    headers = {'Content-Disposition': 'inline; filename="timeseries.png"'}
-    return Response(im_bytes, headers=headers, media_type='image/png')
-
-
-@app.get("/image/temperature/daily/histogram")
-async def get_daily_temperature_histogram(coordinate: Coordinate = Depends()):
-    # Get historical timeseries
-    temperature_at_position = await get_position_timeseries(coordinate, temperature_cache, 'max')
-    # Get current temperature
-    forecast_temperature = await get_forecast_data(coordinate)
-    date = datetime.fromtimestamp(coordinate.timestamp)
-    date_string = date.strftime('%Y-%m-%d')
-    current_temperature = forecast_temperature.loc[date_string].values[0]
-    # Plot
-    im_bytes = await plot_histogram(temperature_at_position, current_temperature)
-    headers = {'Content-Disposition': 'inline; filename="histogram.png"'}
-    return Response(im_bytes, headers=headers, media_type='image/png')
-
-
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8000)
