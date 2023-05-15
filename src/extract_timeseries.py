@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 
 # %%
-def get_historical_timeseries(coordinate, data_historical):
+async def get_historical_timeseries(coordinate, data_historical):
     date = datetime.fromtimestamp(coordinate.timestamp)
 
     # select week and months
