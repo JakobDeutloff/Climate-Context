@@ -1,11 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, Depends
-import xarray as xr
-from fastapi import Response
 from pydantic import BaseModel
-from datetime import datetime, timedelta
 from src.extract_timeseries import get_historical_timeseries
-from src.temperature_plot import plot_timeseries, plot_histogram
 from src.calculations import calculate_mean_value_current_value_and_rp
 from src.api_request import get_forecast_and_historical_data
 
