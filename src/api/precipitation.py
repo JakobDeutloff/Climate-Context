@@ -1,7 +1,7 @@
 from fastapi import Depends, APIRouter
 
 from src.definitions import WeatherVariable, Coordinate, WeatherModel, WeatherVariableName
-from src.calculations import get_weather_variable_data
+from src.calculate_statistics import get_weather_variable_data
 
 
 router = APIRouter()

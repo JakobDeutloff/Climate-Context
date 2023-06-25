@@ -6,7 +6,7 @@ import pytest
 from numpy.random import default_rng
 from scipy.stats import genextreme, gamma
 
-from src.calculations import calculate_return_period, calculate_cumulative_probability, WeatherVariable, \
+from src.calculate_statistics import calculate_return_period, calculate_cumulative_probability, WeatherVariable, \
     ReturnPeriodMode
 
 TEMPERATURE_C = 0
@@ -216,7 +216,7 @@ async def test_calculate_cumulative_probability_precipitation_outlier(
 
 @pytest.mark.asyncio
 @patch(
-    'src.calculations.calculate_cumulative_probability',
+    'src.calculate_statistics.calculate_cumulative_probability',
     return_value=0.33
 )
 async def test_calculate_return_period_mode_min(
@@ -242,7 +242,7 @@ async def test_calculate_return_period_mode_min(
 
 @pytest.mark.asyncio
 @patch(
-    'src.calculations.calculate_cumulative_probability',
+    'src.calculate_statistics.calculate_cumulative_probability',
     return_value=0.66
 )
 async def test_calculate_return_period_mode_max(
