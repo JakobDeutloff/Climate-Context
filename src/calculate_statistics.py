@@ -106,7 +106,7 @@ def calculate_mean_value_current_value_and_rp(
         return_period = 2  # if temperatures are the same cdf=0.5 which gives rp=2
         last_occurrence = calculate_last_occurrence(historical_values, current_value, mode=ReturnPeriodMode.MAX)
 
-    return mean_historical_value, return_period, current_value, last_occurrence
+    return mean_historical_value, return_period, current_value, last_occurrence.item()
 
 
 def calculate_last_occurrence(historical_data, current_value, mode):
