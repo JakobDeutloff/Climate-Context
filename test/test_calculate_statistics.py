@@ -290,3 +290,29 @@ def test_calculate_last_occurrence_min(temperature_timeseries):
     )
 
     assert expected_last_occurrence == actual_last_occurrence
+
+
+def test_calculate_last_occurrence_min_never(temperature_timeseries):
+    current_temperature = 0
+    expected_last_occurrence = 'Never'
+
+    actual_last_occurrence = calculate_last_occurrence(
+        current_value=current_temperature,
+        historical_data=temperature_timeseries,
+        mode=ReturnPeriodMode.MIN
+    )
+
+    assert expected_last_occurrence == actual_last_occurrence
+
+
+def test_calculate_last_occurrence_max_never(temperature_timeseries):
+    current_temperature = 40
+    expected_last_occurrence = 'Never'
+
+    actual_last_occurrence = calculate_last_occurrence(
+        current_value=current_temperature,
+        historical_data=temperature_timeseries,
+        mode=ReturnPeriodMode.MAX
+    )
+
+    assert expected_last_occurrence == actual_last_occurrence

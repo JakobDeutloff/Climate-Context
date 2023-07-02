@@ -106,14 +106,18 @@ def calculate_mean_value_current_value_and_rp(
         return_period = 2  # if temperatures are the same cdf=0.5 which gives rp=2
         last_occurrence = calculate_last_occurrence(historical_values, current_value, mode=ReturnPeriodMode.MAX)
 
-    return mean_historical_value, return_period, current_value, last_occurrence.item()
+    return mean_historical_value, return_period, current_value, last_occurrence
 
 
 def calculate_last_occurrence(historical_data, current_value, mode):
     if ReturnPeriodMode.MAX == mode:
-        return historical_data.iloc[:, 0].sort_index(ascending=False).ge(current_value).idxmax()
+        if historical_data.iloc[:, 0].sort_index(ascending=False).ge(current_value).eq(False).all():
+            return 'Never'
+        return historical_data.iloc[:, 0].sort_index(ascending=False).ge(current_value).idxmax().item()
     else:
-        return historical_data.iloc[:, 0].sort_index(ascending=False).le(current_value).idxmax()
+        if historical_data.iloc[:, 0].sort_index(ascending=False).le(current_value).eq(False).all():
+            return 'Never'
+        return historical_data.iloc[:, 0].sort_index(ascending=False).le(current_value).idxmax().item()
 
 
 def get_weather_variable_data(coordinate, weather_model, weather_variable, weather_variable_name):
