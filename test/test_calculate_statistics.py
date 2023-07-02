@@ -7,7 +7,7 @@ from numpy.random import default_rng
 from scipy.stats import genextreme, gamma
 
 from src.calculate_statistics import calculate_return_period, calculate_cumulative_probability, WeatherVariable, \
-    ReturnPeriodMode
+    ReturnPeriodMode, calculate_last_occurrence
 
 TEMPERATURE_C = 0
 TEMPERATURE_LOCATION = 15
@@ -264,3 +264,29 @@ async def test_calculate_return_period_mode_max(
     assert WeatherVariable.TEMPERATURE == calculate_cumulative_probability_mock.call_args.kwargs['weather_variable']
 
     assert return_period == pytest.approx(expected=3, rel=0.1)
+
+
+def test_calculate_last_occurrence_max(temperature_timeseries):
+    current_temperature = 20
+    expected_last_occurrence = 2017
+
+    actual_last_occurrence = calculate_last_occurrence(
+        current_value=current_temperature,
+        historical_data=temperature_timeseries,
+        mode=ReturnPeriodMode.MAX
+    )
+
+    assert expected_last_occurrence == actual_last_occurrence
+
+
+def test_calculate_last_occurrence_min(temperature_timeseries):
+    current_temperature = 10
+    expected_last_occurrence = 2019
+
+    actual_last_occurrence = calculate_last_occurrence(
+        current_value=current_temperature,
+        historical_data=temperature_timeseries,
+        mode=ReturnPeriodMode.MIN
+    )
+
+    assert expected_last_occurrence == actual_last_occurrence

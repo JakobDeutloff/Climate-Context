@@ -98,12 +98,22 @@ def calculate_mean_value_current_value_and_rp(
     # calculate return period of actual temperature
     if current_value > mean_historical_value:
         return_period = calculate_return_period(historical_values, current_value, mode=ReturnPeriodMode.MAX)
+        last_occurrence = calculate_last_occurrence(historical_values, current_value, mode=ReturnPeriodMode.MAX)
     elif current_value < mean_historical_value:
         return_period = calculate_return_period(historical_values, current_value, mode=ReturnPeriodMode.MIN)
+        last_occurrence = calculate_last_occurrence(historical_values, current_value, mode=ReturnPeriodMode.MIN)
     else:
         return_period = 2  # if temperatures are the same cdf=0.5 which gives rp=2
+        last_occurrence = calculate_last_occurrence(historical_values, current_value, mode=ReturnPeriodMode.MAX)
 
-    return mean_historical_value, return_period, current_value
+    return mean_historical_value, return_period, current_value, last_occurrence
+
+
+def calculate_last_occurrence(historical_data, current_value, mode):
+    if ReturnPeriodMode.MAX == mode:
+        return historical_data.iloc[:, 0].sort_index(ascending=False).ge(current_value).idxmax()
+    else:
+        return historical_data.iloc[:, 0].sort_index(ascending=False).le(current_value).idxmax()
 
 
 def get_weather_variable_data(coordinate, weather_model, weather_variable, weather_variable_name):
@@ -116,7 +126,7 @@ def get_weather_variable_data(coordinate, weather_model, weather_variable, weath
     daily_historical_data, weekly_historical_data, monthly_historical_data = \
         get_historical_timeseries(coordinate, historical_data)
 
-    daily_mean_value, daily_return_period, daily_current_value = \
+    daily_mean_value, daily_return_period, daily_current_value, daily_last_occurrence = \
         calculate_mean_value_current_value_and_rp(
             daily_historical_data,
             forecast_data,
@@ -124,7 +134,7 @@ def get_weather_variable_data(coordinate, weather_model, weather_variable, weath
             time_frame=TimeFrame.DAILY
         )
 
-    weekly_mean_value, weekly_return_period, weekly_current_value = \
+    weekly_mean_value, weekly_return_period, weekly_current_value, weekly_last_occurrence = \
         calculate_mean_value_current_value_and_rp(
             weekly_historical_data,
             forecast_data,
@@ -132,7 +142,7 @@ def get_weather_variable_data(coordinate, weather_model, weather_variable, weath
             time_frame=TimeFrame.WEEKLY
         )
 
-    monthly_mean_value, monthly_return_period, monthly_current_value = \
+    monthly_mean_value, monthly_return_period, monthly_current_value, monthly_last_occurrence = \
         calculate_mean_value_current_value_and_rp(
             monthly_historical_data,
             forecast_data,
@@ -146,14 +156,17 @@ def get_weather_variable_data(coordinate, weather_model, weather_variable, weath
         f'daily_return_period_{weather_variable_name.value}': daily_return_period,
         f'daily_historical_{weather_variable_name.value}': list(daily_historical_data.values.squeeze()),
         'daily_historical_index': list(daily_historical_data.index),
+        'daily_last_occurrence': daily_last_occurrence,
         f'weekly_average_{weather_variable_name.value}': weekly_mean_value,
         f'weekly_current_{weather_variable_name.value}': weekly_current_value,
         f'weekly_return_period_{weather_variable_name.value}': weekly_return_period,
         f'weekly_historical_{weather_variable_name.value}': list(weekly_historical_data.values.squeeze()),
         'weekly_historical_index': list(weekly_historical_data.index),
+        'weekly_last_occurrence': weekly_last_occurrence,
         f'monthly_average_{weather_variable_name.value}': monthly_mean_value,
         f'monthly_current_{weather_variable_name.value}': monthly_current_value,
         f'monthly_return_period_{weather_variable_name.value}': monthly_return_period,
         f'monthly_historical_{weather_variable_name.value}': list(monthly_historical_data.values.squeeze()),
         'monthly_historical_index': list(monthly_historical_data.index),
+        'monthly_last_occurrence': monthly_last_occurrence,
     }
