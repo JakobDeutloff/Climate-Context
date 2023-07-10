@@ -80,7 +80,7 @@ async def test_calculate_cumulative_probability_temperature_low_outlier(
 ):
     cumulative_probability = calculate_cumulative_probability(
         timeseries=temperature_timeseries,
-        current_value=-20,
+        current_value=-25,
         weather_variable=WeatherVariable.TEMPERATURE
     )
     assert cumulative_probability == pytest.approx(0)
@@ -95,7 +95,7 @@ async def test_calculate_cumulative_probability_temperature_low(
         current_value=10,
         weather_variable=WeatherVariable.TEMPERATURE
     )
-    assert cumulative_probability == pytest.approx(expected=0.10, rel=0.1)
+    assert cumulative_probability == pytest.approx(expected=0.12, rel=0.1)
 
 
 @pytest.mark.asyncio

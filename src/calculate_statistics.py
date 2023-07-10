@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
-from scipy.stats import genextreme, gamma
+from scipy.stats import norm, gamma
 
 from src.definitions import WeatherVariable, ReturnPeriodMode, TimeFrame
 from src.extract_timeseries import get_historical_timeseries
@@ -13,7 +13,7 @@ EPSILON = 1e-6
 
 
 WEATHER_VARIABLE_TO_DISTRIBUTION = {
-    WeatherVariable.TEMPERATURE: genextreme,
+    WeatherVariable.TEMPERATURE: norm,
     WeatherVariable.PRECIPITATION: gamma
 }
 
