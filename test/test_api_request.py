@@ -1,12 +1,10 @@
 from unittest import TestCase
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 
 import pandas as pd
 import pytest
 import responses
-from requests import Response
 
-import src.weather_api_request
 from src.definitions import WeatherVariable, TimeFrame, Coordinate, WeatherModel
 from src.weather_api_request import FORECAST_API_ENDPOINT, weather_api_request, WeatherApiException, \
     get_forecast_and_historical_data, HISTORICAL_API_ENDPOINT
