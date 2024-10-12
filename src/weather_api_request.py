@@ -65,7 +65,7 @@ def weather_api_request(
         weather_variable: WeatherVariable,
         api_uri: str
 ) -> pd.DataFrame:
-    api_response = requests.get(api_uri, parameters)
+    api_response = requests.get(api_uri, params=parameters)
 
     if api_response.status_code != 200:
         raise WeatherApiException(f'Failed to fetch weather data with: {api_response.json()["reason"]}')
