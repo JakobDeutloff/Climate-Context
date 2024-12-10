@@ -7,7 +7,7 @@ import pandas as pd
 from src.definitions import WeatherVariable, Coordinate, WeatherModel
 
 FORECAST_API_ENDPOINT = 'https://api.open-meteo.com/v1/forecast'
-HISTORICAL_API_ENDPOINT = 'https://archive-api.open-meteo.com/v1/archive'
+HISTORICAL_API_ENDPOINT = 'http://127.0.0.1:8081/v1/archive'
 
 
 class WeatherApiException(Exception):
