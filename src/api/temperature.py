@@ -11,7 +11,7 @@ router = APIRouter()
 async def get_daily_average_temperature(coordinate: Coordinate = Depends()):
     return get_weather_variable_data(
         coordinate=coordinate,
-        weather_model=WeatherModel.ERA5_LAND,
+        weather_model=WeatherModel.ERA5,
         weather_variable=WeatherVariable.TEMPERATURE,
         weather_variable_name=WeatherVariableName.TEMPERATURE
     )
