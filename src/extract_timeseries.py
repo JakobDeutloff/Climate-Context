@@ -12,9 +12,9 @@ def get_historical_timeseries(coordinate, data_historical):
     monthly_data = []
 
     if date.month != 1:
-        historical_start_year = 1950
+        historical_start_year = 1940
     else:
-        historical_start_year = 1951
+        historical_start_year = 1941
 
     for year in range(historical_start_year, date.year):
         end_date = datetime(year=year, month=date.month, day=date.day)

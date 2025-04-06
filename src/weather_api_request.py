@@ -43,7 +43,7 @@ def get_forecast_and_historical_data(
         'models': weather_model.value,
         'daily': weather_variable.value,
         'timezone': 'auto',
-        'start_date': '1950-01-01',
+        'start_date': '1940-01-01',
         'end_date': end_date_historical_string
     }
 

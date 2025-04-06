@@ -30,7 +30,7 @@ def historical_parameters():
         'latitude': 48.3504104,
         'longitude': 10.8766662,
         'models': 'era5_land',
-        'start_date': '1950-01-01',
+        'start_date': '1940-01-01',
         'timezone': 'auto'
     }
 
