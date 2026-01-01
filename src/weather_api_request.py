@@ -74,4 +74,4 @@ def weather_api_request(
         data=api_response.json()['daily'][weather_variable.value],
         index=pd.DatetimeIndex(api_response.json()['daily']['time']),
         columns=[weather_variable.value]
-    )
+    ).dropna(axis=0)
