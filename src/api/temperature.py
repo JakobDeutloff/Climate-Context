@@ -7,7 +7,7 @@ from src.calculate_statistics import get_weather_variable_data
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("")
 async def get_daily_average_temperature(coordinate: Coordinate = Depends()):
     return get_weather_variable_data(
         coordinate=coordinate,
