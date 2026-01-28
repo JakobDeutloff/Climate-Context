@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 from src.definitions import WeatherVariable, Coordinate, WeatherModel
+import logging
+logger = logging.getLogger('uvicorn.error')
 
 FORECAST_API_ENDPOINT = 'https://api.open-meteo.com/v1/forecast'
 HISTORICAL_API_ENDPOINT = 'http://127.0.0.1:8081/v1/archive'
@@ -65,11 +67,13 @@ def weather_api_request(
         weather_variable: WeatherVariable,
         api_uri: str
 ) -> pd.DataFrame:
+    logger.info(f'Fetching weather data from {api_uri}.')
     api_response = requests.get(api_uri, params=parameters)
 
     if api_response.status_code != 200:
         raise WeatherApiException(f'Failed to fetch weather data with: {api_response.json()["reason"]}')
 
+    logger.info(f'Fetched weather data successfully.')
     return pd.DataFrame(
         data=api_response.json()['daily'][weather_variable.value],
         index=pd.DatetimeIndex(api_response.json()['daily']['time']),

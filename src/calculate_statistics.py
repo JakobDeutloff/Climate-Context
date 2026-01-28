@@ -7,6 +7,8 @@ from scipy.stats import norm, gamma
 from src.definitions import WeatherVariable, ReturnPeriodMode, TimeFrame
 from src.extract_timeseries import get_historical_timeseries
 from src.weather_api_request import get_forecast_and_historical_data
+import logging
+logger = logging.getLogger('uvicorn.error')
 
 # Small constant to avoid division by zero.
 EPSILON = 1e-6
@@ -127,6 +129,7 @@ def get_weather_variable_data(coordinate, weather_model, weather_variable, weath
         weather_model=weather_model
     )
 
+    logger.info('Calculate weather climate context stats.')
     daily_historical_data, weekly_historical_data, monthly_historical_data = \
         get_historical_timeseries(coordinate, historical_data)
 

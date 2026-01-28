@@ -3,7 +3,6 @@ import numpy as np
 from datetime import datetime, timedelta
 
 
-# %%
 def get_historical_timeseries(coordinate, data_historical):
     date = datetime.fromtimestamp(coordinate.timestamp)
 
